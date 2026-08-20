@@ -1,0 +1,70 @@
+{
+  "lockVersion": 1,
+  "packageDigest": "21cd6ca79067ab24a4bf5576b993f8355529c6daa44154103749ad40da5b9bcd",
+  "files": [
+    {
+      "path": ".gitignore",
+      "size": 30,
+      "sha256": "bbff771e663eb3bf6d014b90a6904fd19e56c495ff1ea371a3519a7574a428fa"
+    },
+    {
+      "path": ".vibex-plugin/content.index.json",
+      "size": 926,
+      "sha256": "fe022191da016583e3726a56ae1ef929871b725b6acd421af3c2028bd1338759"
+    },
+    {
+      "path": ".vibex-plugin/plugin.json",
+      "size": 1137,
+      "sha256": "c5b4ceedec6b3e728a000674e291025ee43fd206c7273c0220ab4532ed3313ef"
+    },
+    {
+      "path": "LICENSE",
+      "size": 1062,
+      "sha256": "478be3a34d5e25cca9737aad3631c5fc90010fcbea2c555aceff3e9028d26962"
+    },
+    {
+      "path": "README.md",
+      "size": 3073,
+      "sha256": "9e4155a00d0af0590f7de85e664af23f9e59cf439a09e1a461e3fa4d8edc0730"
+    },
+    {
+      "path": "assets/icon.svg",
+      "size": 423,
+      "sha256": "77f4d74791b2eb71cf7ef3148a5c469a1bb4a5d7dbf5577d678bacc8daf44ccf"
+    },
+    {
+      "path": "contents/mcps/plugin-dev.json",
+      "size": 204,
+      "sha256": "9d0633fc54c77fa271340f7f0d071ce907aa50cca965afdaa29d9c552d467bb6"
+    },
+    {
+      "path": "contents/skills/vibex-plugin-development/SKILL.md",
+      "size": 9309,
+      "sha256": "320022d4590c9d36403b99a1af72fa7a128dd693344ef2a6074c81c01a218406"
+    },
+    {
+      "path": "contents/skills/vibex-plugin-development/references/contract.md",
+      "size": 3806,
+      "sha256": "deb482768db8326ffc251b9f764ac6dfa74087aff4672a31a3777c33397c481d"
+    },
+    {
+      "path": "contents/skills/vibex-plugin-development/references/link-mcp.md",
+      "size": 1399,
+      "sha256": "5a7ca18e29222b66b3c5160e12dcb351992f25a63e9cc1bcbc6928c9b2c261df"
+    },
+    {
+      "path": "contents/skills/vibex-plugin-development/references/node-worker.md",
+      "size": 1241,
+      "sha256": "d4fc775e2154bd397720a0bda634e2330d51795bd9a4fb094eb0b5f6ba4c4f20"
+    },
+    {
+      "path": "contents/skills/vibex-plugin-development/references/templates.md",
+      "size": 1288,
+      "sha256": "dabcb739f1836b62b8a36fb7d81dc106be3017e2df36b3030e5e800a710a30af"
+    }
+  ],
+  "build": {
+    "cliVersion": "1.0.0",
+    "reproducible": true
+  }
+}

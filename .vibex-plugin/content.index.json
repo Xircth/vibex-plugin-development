@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "items": [
+    {
+      "path": "contents/skills/vibex-plugin-development/SKILL.md",
+      "kind": "skill",
+      "title": "VibeX 插件开发"
+    },
+    {
+      "path": "contents/skills/vibex-plugin-development/references/contract.md",
+      "kind": "reference",
+      "title": "产品包契约"
+    },
+    {
+      "path": "contents/skills/vibex-plugin-development/references/templates.md",
+      "kind": "reference",
+      "title": "init 模板产物"
+    },
+    {
+      "path": "contents/skills/vibex-plugin-development/references/node-worker.md",
+      "kind": "reference",
+      "title": "Node Worker 入口"
+    },
+    {
+      "path": "contents/skills/vibex-plugin-development/references/link-mcp.md",
+      "kind": "reference",
+      "title": "开发 MCP 与链接"
+    },
+    {
+      "path": "contents/mcps/plugin-dev.json",
+      "kind": "mcp",
+      "title": "插件开发 MCP"
+    }
+  ]
+}
