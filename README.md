@@ -1,32 +1,34 @@
 ---
-summary: 让 Agent 在本机用当前 Host 的 SDK 与 CLI 开发、校验并链接插件。
+summary: 让 Agent 在本机用当前 Host 的 SDK 与 CLI 开发、校验、链接并发布插件。
 ---
 
 # 插件开发
 
-给正在写 VibeX 插件的人一套跟当前 Host 一致的本机工具链：Skill、SDK、CLI，以及可选的开发 MCP。Agent 应先定位本机契约，再 `init` / `validate` / `test` / `build` / `pack`。
+给正在写 VibeX 插件的人一套跟当前 Host 一致的本机工具链：Skill、SDK、CLI。Agent 先定位本机契约，再 `init` / `validate` / `test` / `build` / `pack`，用 `vibex plugin add --dev` 链到正在跑的 Host，用 `vibex plugin publish` 提交官网市场。
 
-这是随 Host 分发的内置插件，默认关闭。详情页可以停用。启用后，开发 Skill 投影到已安装且支持 Skill 的 Agent。开发 MCP 默认关闭。
+从设置 → 插件 → 插件市场的官方分类安装。默认关闭，可以卸载。启用后，开发 Skill 投影到已安装且支持 Skill 的 Agent。新开或重新绑定的会话才会带上这条 Skill。
 
 ## 启用
 
-1. 在 `/plugins` 打开「插件开发」。此时只投递 Skill。
-2. 若要让 Agent 发起「链接本机目录」，到配置打开「开发 MCP」。
-3. 新开或重新绑定会话。官方 MCP 进入启用之后的新会话或 rebind 会话。
+1. 从市场官方分类安装「插件开发」，在已安装 Tab 打开启用。
+2. 新开或重新绑定会话，再用 `/create-skill` 或直接描述要做的产品。
 
-链接本机插件仍要在 Host 上确认 Full Trust。令牌不会出现在工具结果里。
+安装或链接被开发的包即 Full Trust。不要把 Host token 贴进对话。
 
 ## 让 Agent 创建插件
 
-在已启用本插件的会话里，用 `/create-skill` 或直接描述要做的产品。Agent 会：
+在已启用本插件的会话里，Agent 会：
 
-1. 定位 `vibex-plugin` / Host 附带 SDK。
+1. 定位 `vibex-plugin` 与本机 SDK。
 2. 确认 summary、publisher、id、integration。
-3. `vibex-plugin init`，接好 Node stdio 入口。
+3. `vibex-plugin init`。Node 模板已含 stdio 入口。
 4. `build`、`validate`、`test`。
-5. 若已打开开发 MCP，走 `plugin_dev_link_request` 链接目录。
+5. `vibex plugin add --dev .` 链到本机 Host。
+6. 用户要求上架时 `vibex plugin publish`。
 
 ## 工具链
+
+作者 CLI：
 
 ```text
 vibex-plugin toolchain
@@ -37,35 +39,45 @@ vibex-plugin test
 vibex-plugin pack
 ```
 
-VibeX 源码树内可用 `node packages/plugin-cli/dist/cli.js`。
+产品 CLI：
+
+```text
+vibex plugin add --dev .
+vibex plugin test --host
+vibex plugin pack
+vibex plugin publish
+vibex plugin add --profile file.vxp
+vibex plugin add --web https://github.com/<owner>/<repo>#tag
+vibex plugin list
+```
+
+VibeX 源码树内作者 CLI 为 `node packages/plugin-cli/dist/cli.js`。
 
 一个产品包要有：README 的 `summary`、`contents/`、根 `config.json`、至少一项声明过的 integration。可执行代码按 Full Trust 运行。
 
 ## 链接本机目录
 
-1. 打开本插件，并打开「开发 MCP」。
-2. 新开或重新绑定会话。
-3. Agent 调用 `plugin_dev_link_request`。第一次结果是待确认。
-4. 在 VibeX 里确认 Full Trust。
-5. `plugin_dev_link_status` 返回 `grantId` 和 `endpoint`。之后在这台 Host 上跑 `vibex-plugin install --link .` 或 `vibex-plugin dev`。
+1. 启用本插件并新开会话。
+2. Desktop 或 `vibex serve` 正在跑。
+3. 在被开发的插件根执行 `vibex plugin add --dev .`。未加 `--detach` 时，Worker stderr 打到当前终端。
+4. 若尚未启用，到「设置 → 插件」打开被开发的包。
+5. 按声明的 integration 验收。源码变化后 Host 按 digest 发布候选代。
 
-Host 保留开发目录。源内容变化后重新校验身份、贡献和配置。
+Host 保留开发目录。卸载链接只去掉 VibeX 一侧引用。
 
 ## 配置
 
-**开发 MCP** 默认关闭。打开后才会把 `plugin_dev_link_request` / `plugin_dev_link_status` 注入后续会话。
-
-卸载本插件的链接引用时，开发目录仍在。`config.json` 随 Host 数据目录保留策略处理；缺省保留。本包不存储密钥。
+本包没有可配置项。卸载本插件时，开发目录仍在。`config.json` 随 Host 数据目录保留策略处理；缺省保留。本包不存储密钥。
 
 ## 离线与网络
 
-SDK、CLI、校验和链接都在本机。本包不把源码发到外部市场。
+SDK、CLI、校验和链接都在本机。`vibex plugin add --web` 才会按你给的 Git 地址取包。`vibex plugin publish` 才会把包或仓库提交到官网待审队列。
 
 ## 排障
 
 - `vibex-plugin toolchain` 找不到：使用当前 Host 附带的 CLI，或 VibeX 仓库里的 `packages/plugin-cli/dist/cli.js`。
-- Agent 没有 link 工具：开发 MCP 默认关着。打开配置后必须新开会话。
-- 链接一直 pending：到 VibeX 里确认 Full Trust。
-- 改完源码界面没变：按候选代流程重新校验、激活。
+- `No running VibeX Host`：先开 Desktop 或 `vibex serve`。未运行时 `--dev` 会排队到 `~/.vibex/imports`。
+- 当前会话没有开发 Skill：启用本插件后新开或 rebind 会话。
+- 改完源码界面没变：按候选代流程重新校验、激活；文件页、预览、MCP 以 Host 为准。
 - `worker_entrypoint_invalid`：Worker 需要 `runtime` + `protocol: "1.1"`，删除 `format`。
 - Node Worker 立刻退出：`runtime/main.mjs` 必须调用 `runStdioPluginWorker`。

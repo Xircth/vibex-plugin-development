@@ -17,19 +17,14 @@
       "title": "init 模板产物"
     },
     {
-      "path": "contents/skills/vibex-plugin-development/references/node-worker.md",
+      "path": "contents/skills/vibex-plugin-development/references/runtime.md",
       "kind": "reference",
-      "title": "Node Worker 入口"
+      "title": "Worker 与 App 运行时"
     },
     {
-      "path": "contents/skills/vibex-plugin-development/references/link-mcp.md",
+      "path": "contents/skills/vibex-plugin-development/references/link.md",
       "kind": "reference",
-      "title": "开发 MCP 与链接"
-    },
-    {
-      "path": "contents/mcps/plugin-dev.json",
-      "kind": "mcp",
-      "title": "插件开发 MCP"
+      "title": "链接运行中的 Host"
     }
   ]
 }

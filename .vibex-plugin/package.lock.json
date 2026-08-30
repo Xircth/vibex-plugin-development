@@ -1,6 +1,6 @@
 {
   "lockVersion": 1,
-  "packageDigest": "21cd6ca79067ab24a4bf5576b993f8355529c6daa44154103749ad40da5b9bcd",
+  "packageDigest": "2b4f41d60e1b60f603c3654718ba318daa85d8e59351f9505b7cc458aefb2104",
   "files": [
     {
       "path": ".gitignore",
@@ -9,13 +9,13 @@
     },
     {
       "path": ".vibex-plugin/content.index.json",
-      "size": 926,
-      "sha256": "fe022191da016583e3726a56ae1ef929871b725b6acd421af3c2028bd1338759"
+      "size": 812,
+      "sha256": "2b5fc1c3e1141d7d55cf710099962f2fed35d50df0010cbfd0bb02aed9a3def8"
     },
     {
       "path": ".vibex-plugin/plugin.json",
-      "size": 1137,
-      "sha256": "c5b4ceedec6b3e728a000674e291025ee43fd206c7273c0220ab4532ed3313ef"
+      "size": 803,
+      "sha256": "ac718a796b1ce4287e9b5023eb080a251940ae69ed98e5c3754f3022b1a243e5"
     },
     {
       "path": "LICENSE",
@@ -24,8 +24,8 @@
     },
     {
       "path": "README.md",
-      "size": 3073,
-      "sha256": "9e4155a00d0af0590f7de85e664af23f9e59cf439a09e1a461e3fa4d8edc0730"
+      "size": 3420,
+      "sha256": "6c842ae77decf033da4ada4dd5528fbf36d2a3136b717e998ce9f5fdc5aa6c3f"
     },
     {
       "path": "assets/icon.svg",
@@ -33,34 +33,29 @@
       "sha256": "77f4d74791b2eb71cf7ef3148a5c469a1bb4a5d7dbf5577d678bacc8daf44ccf"
     },
     {
-      "path": "contents/mcps/plugin-dev.json",
-      "size": 204,
-      "sha256": "9d0633fc54c77fa271340f7f0d071ce907aa50cca965afdaa29d9c552d467bb6"
-    },
-    {
       "path": "contents/skills/vibex-plugin-development/SKILL.md",
-      "size": 9309,
-      "sha256": "320022d4590c9d36403b99a1af72fa7a128dd693344ef2a6074c81c01a218406"
+      "size": 11906,
+      "sha256": "1848d7fe578aab142c2ab42000d5591ad5493899220b599e52add421e80da640"
     },
     {
       "path": "contents/skills/vibex-plugin-development/references/contract.md",
-      "size": 3806,
-      "sha256": "deb482768db8326ffc251b9f764ac6dfa74087aff4672a31a3777c33397c481d"
+      "size": 6173,
+      "sha256": "7a1ad970ecc44ba45c5c8a64fa6d70c4f9836dd6ff74ced6a453065f0ecad0ee"
     },
     {
-      "path": "contents/skills/vibex-plugin-development/references/link-mcp.md",
-      "size": 1399,
-      "sha256": "5a7ca18e29222b66b3c5160e12dcb351992f25a63e9cc1bcbc6928c9b2c261df"
+      "path": "contents/skills/vibex-plugin-development/references/link.md",
+      "size": 2500,
+      "sha256": "ecdb67423b586e663ecce16a4ff152e73078561eecd720591807cf91b67f68df"
     },
     {
-      "path": "contents/skills/vibex-plugin-development/references/node-worker.md",
-      "size": 1241,
-      "sha256": "d4fc775e2154bd397720a0bda634e2330d51795bd9a4fb094eb0b5f6ba4c4f20"
+      "path": "contents/skills/vibex-plugin-development/references/runtime.md",
+      "size": 5122,
+      "sha256": "93b824475240036c9831e4a7ef2d3f2319094c85681aa977f2b197031a5e605d"
     },
     {
       "path": "contents/skills/vibex-plugin-development/references/templates.md",
-      "size": 1288,
-      "sha256": "dabcb739f1836b62b8a36fb7d81dc106be3017e2df36b3030e5e800a710a30af"
+      "size": 2214,
+      "sha256": "ccd06634d2f27546aa16875ad8e87f9322e3c6e67e2844a6974653e97dbf8c31"
     }
   ],
   "build": {
