@@ -101,6 +101,17 @@ Worker 通过 `environment.host.call(capability, operation, input?)` 调 Host。
 - `runtime.execute`：按 Runtime lock 启动进程。input 需 `runtimeId`。stdin JSON ≤ 1 MiB，超时 120 秒。
 - `artifact.preview` / `open`：打开预览。需要 Host 签发的约 30 秒一次性 `artifactHandle`，以及 `providerId`。成功返回 `leaseId`、loopback `port`、`capabilityToken`、`expiresAtUnixMs`。
 - `storage.kv.get|put|delete|list`：按插件 ID 隔离的进程内 KV。
+- `conversation.create` `{ agentId, workspaceId?, title?, prompt? }`：创建并绑定一条 VibeX Conversation。省略 `workspaceId` 则使用插件自己的 scratch 工作区。
+- `conversation.list`：只列本插件拥有或被授予的会话。
+- `conversation.read.get` `{ conversationId }`：摘要 + 最近 Turn + 排队输入 + sequence。
+- `conversation.append.enqueueInput` `{ conversationId, text, images?, modeOverride? }`：同一条 `submit` 控制面。
+- `conversation.steer` `{ conversationId, expectedTurnId, text }`：在途纠偏。
+- `conversation.cancel` / `conversation.cancelInput` / `conversation.listInputs`
+- `conversation.respondPermission` / `conversation.respondQuestion`
+- `conversation.setMode` / `conversation.setConfigOption`
+- `conversation.catalog`：可选 Agent。
+- `conversation.archive`
+- `conversation.events.since` `{ conversationId, afterSequence? }`：时间线行。
 - `log.*`：scoped 诊断，返回 `{}`。
 - `plugin.self` / `doctor`：返回 `pluginId`、`generation`、空诊断。
 
@@ -108,7 +119,7 @@ Worker 通过 `environment.host.call(capability, operation, input?)` 调 Host。
 
 - `network.fetch` → `network_denied`。Full Trust 用语言运行时自己联网。
 - `files.read|write|stat|list` → `files_root_denied`。
-- `conversation.read.get`、`conversation.append.enqueueInput` → `conversation_scope_denied`。
+- `conversation.*` 对未绑定会话 → `conversation_scope_denied`。
 - `agent.invoke` → `handler_not_visible`。
 - `artifact.readText|writeText` → `artifact_not_found`。文本 I/O 在 App bridge。
 
