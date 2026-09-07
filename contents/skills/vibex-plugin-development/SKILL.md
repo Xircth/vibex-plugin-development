@@ -80,7 +80,7 @@ vibex-plugin init <dir> --publisher <publisher> --template <template>
 
 把用户说明写进 README 正文：运行要求、离线与网络、排障、第三方许可、卸载后配置去留。持久设置只写 `config.json`，并在 `config.schema` 描述。
 
-官方包可对照，但不要复制其内部实现：`vibex.office`、`vibex.workflow-creator`、`vibex.session-enhance`、`vibex.multi-agent`。
+官方包可对照，但不要复制其内部实现：`vibex.office`、`vibex.workflow-creator`、`vibex.session-enhance`、`vibex.multi-agent`、`vibex.remote-ssh`。
 
 ## 4. 实现可执行入口
 
