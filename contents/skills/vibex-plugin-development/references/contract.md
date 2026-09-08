@@ -14,23 +14,24 @@ my-plugin/
 ├─ contents/                          # Skill / MCP / Hook / Workflow / 其它
 ├─ depends/                           # 仅当 dependencies 引用时
 ├─ runtime/                           # 作者源码，不进 .vxp
+├─ src/                               # Federation 面板源码（panel / kanban-view）
 └─ dist/                              # build 输出
 ```
 
 路径相对包根，用 `/`。拒绝绝对路径、`..`、符号链接。
 
-`vibex-plugin build`：校验 summary、schema、索引、integrations、dependencies；编译 `runtime/main.mjs` → `dist/worker.mjs`；编译 App 与 `managedRuntime.source`。
+`vibex-plugin build`：校验 summary、schema、索引、integrations、dependencies；编译 `runtime/main.mjs` → `dist/worker.mjs`；编译 App、Federation remote 与 `managedRuntime.source`。
 
-`vibex-plugin pack`：写入 `package.lock.json` 与 `signature.json`，`.vxp` 收录 README、config 初值、contents、depends、dist、`.vibex-plugin`。不含 `runtime/`、`test/`、`package.json`、source map。
+`vibex-plugin pack`：写入 `package.lock.json` 与 `signature.json`，`.vxp` 收录 README、config 初值、contents、depends、dist、`.vibex-plugin`。不含 `runtime/`、`src/`、`test/`、`package.json`、source map。
 
 ## plugin.json
 
 - `manifestVersion` 4，`apiVersion` `"1.0"`，`readme` `"README.md"`。
 - `engines.vibex` 写成 `>=0.1.3 <1.0.0`；`engines.pluginSdk` 写成 `^1.0.0`。
-- Worker：`path`、`runtime`（`node`|`python`|`native`）、`protocol` `"1.1"`。禁止 `format`。
+- Worker：`path`、`runtime`（`node`|`python`|`native`）、`protocol` `"1.1"`。省略 `format`。
 - App：`root`、`document`、`protocol` `"1.0"`。
-- v4 缺省执行类 `full-trust`。Isolated 使用 `packages/plugin-contract/schemas/plugin.v5-isolated.json`，不要写进 v4 包。
-- `permissions` 可省略；出现时只作兼容元数据，不是运行门禁。
+- v4 缺省执行类 `full-trust`。Host 按 Full Trust spawn Worker。
+- `permissions` 可省略；出现时只作兼容元数据。
 - `dependencies[].kind` 只能是 `runtime`；`descriptor` 指向 `depends/` 下真实文件。CLI `validate` 与 Host inspect 都拒绝 `kind: "plugin"`。
 
 ## 内容索引
@@ -58,20 +59,35 @@ my-plugin/
 | --- | --- |
 | `content.skill` | 把 `contents/skills/...` 投影给兼容 Agent。可写 `targets` |
 | `content.mcp` | 托管 MCP。资源 JSON 见下 |
-| `content.hook` | Hook 资源；需 `event` |
+| `content.hook` | Hook 资源；需 `event`。清单可校验；当前 Host 无 Hook 运行时 |
 | `workflow.binding` | 把 `contents/workflows/.../workflow.json` 暴露给 Composer / Automation |
 | `file.opener` | 按 `extensions`、`fileNameSuffixes` 或 `mediaTypes` 打开。恰好一个 `previewProvider` 或恰好一个 `editorSurface` |
 | `artifact.preview` | Broker 管的预览 provider，可带 `process.argv` |
-| `app.surface` | Full Trust App。`slot` 只能是 `plugin.detail.panel` 或 `artifact.editor` |
+| `app.surface` | Full Trust App。`slot` 为 `plugin.detail.panel` 或 `artifact.editor` |
+| `app.command` | 命令面板。`title`、`handler` |
+| `app.toolbar` | 工具栏。只可添加 |
+| `app.status` | 状态栏。超出三项进溢出菜单 |
+| `app.composer.slash` | Composer 斜杠。`prompt` 插入输入框 |
+| `app.timeline.card` | 时间线卡片。`handler` 为 `surface.createSession` |
+| `app.settings.section` | 通用设置页内嵌区块 |
+| `app.settings.page` | 设置侧栏整页 |
+| `app.tab` | 中央顶级 Tab |
+| `app.panel` | 工作区 Dockview 面板。`defaultPosition` 为 `left` 或 `center` |
+| `app.kanban.view` | 看板 Tab 内的一页视图 |
+| `app.composer.action` | Composer 提交前动作。需要 `handler` 或 `prompt` |
 | `host.service` | 后台周期调用 Worker handler；`intervalSeconds` 下限 5，缺省 30；同一包最多 8 条 |
+| `provider.model.importSource` | 模型供应商导入来源 |
+| `provider.remote.provisioner` | 远程 Host 供给器。`provisionKind` 为来源标记 |
 
-稳定面（`init` 模板只叙述这些）：上表至 `host.service`。`app.command`、`app.toolbar`、`app.status`、`app.composer.slash`、`app.timeline.card`、`app.settings.section` 在 Host 已挂孔，无官方范例，不进入默认 `init`。
+`init` 模板覆盖上表稳定面。`content.hook` 仅通过清单校验。`icon` 取 `@vibex/plugin-contract/catalog/icons`。
 
 `file.opener` 的 `fileNameSuffixes` 必须以 `.` 开头，只含字母、数字、点、短横、下划线。编辑面的 `app.surface.slot` 必须是 `artifact.editor`，`appEntrypoint` 为 `app`，`handler` 为 `surface.createSession`。
 
+结构面可选 `remote`：`name`、`entry`（通常 `dist/remoteEntry.js`）、`module`。
+
 `host.service` 在启用后按间隔 tick；上一轮未完成则跳过。
 
-SDK 类型里的 `app.surface.slot: conversation.timeline.card` 与 Host/CLI 不一致：Host 与 `validate` 都只接受上面两个 slot。
+Agent 侧贡献在新开或 rebind 会话中注入。UI 与 Provider 贡献启用即出现、禁用即撤下。
 
 ## 托管 MCP
 
@@ -104,7 +120,7 @@ SDK 类型里的 `app.surface.slot: conversation.timeline.card` 与 Host/CLI 不
 
 `protocolRevision` 必须是 `2026-07-28`。`defaultBinding` 只能省略或为 `all-compatible-agents`。hostFamilyBinary 必须带 `binaryId`。包内 MCP 必须能解析 `entrypoint`；`source` 若出现也必须存在，并由 `build` 编译到 `entrypoint`。
 
-官方产品面：`session`、`delegation` 走 `binaryId: "vibex-mcp"`；Workflow Creator 走 `binaryId: "vibex-workflow-mcp"`。第三方包不要冒充这些 product。
+官方产品面：`session`、`delegation` 走 `binaryId: "vibex-mcp"`；Workflow Creator 走 `binaryId: "vibex-workflow-mcp"`。第三方包使用自有 `entrypoint`。
 
 已注入的 STDIO MCP 通常不会热增到旧会话。binding 变化后提示用户新开或 rebind 会话。
 
@@ -117,11 +133,11 @@ SDK 类型里的 `app.surface.slot: conversation.timeline.card` 与 Host/CLI 不
 
 Host 持有规范路径。App 只获得文件名、revision 与 `bridge.artifact`。参考 `vibex.workflow-creator`。
 
-只读预览用 `previewProvider` + `artifact.preview`，不要同时写两个 target。参考 `vibex.office`。
+只读预览用 `previewProvider` + `artifact.preview`，一个 opener 只写一个 target。参考 `vibex.office`。
 
 ## Workflow 资源
 
-`workflow.binding` 的 JSON 至少有 `label`。`init` 模板还写 `entrypoints` 与 `handler`。Office 另有 `promptBlocks`、`requires`、`artifactIntent`。Host 会把 integration `id` 写进该对象。不要发明 Workflow 专用权限模式。
+`workflow.binding` 的 JSON 至少有 `label`。`init` 模板还写 `entrypoints` 与 `handler`。Office 另有 `promptBlocks`、`requires`、`artifactIntent`。Host 会把 integration `id` 写进该对象。沿用 Agent 会话的权限与模式字段。
 
 ## Runtime 依赖
 

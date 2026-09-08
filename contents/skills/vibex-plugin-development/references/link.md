@@ -11,18 +11,24 @@ Host 保留开发目录。卸载链接只去掉 VibeX 一侧引用，永不删�
 本机已安装 `vibex`，且 Desktop 或 `vibex serve` 在跑：
 
 ```text
+vibex plugin run server --http://127.0.0.1:17891 --token <token>
 vibex plugin add --dev . -y
+vibex plugin run dev
 ```
 
-行为（`npx vibex plugin`）：
+`run server` 把 URL 和 token 写入 `~/.vibex/pluginrc`。之后在插件目录里 `run …` 即可。向用户或对话省略 token。
+
+`add --dev`（`npx vibex plugin`）行为：
 
 1. `build`（失败只警告）。
 2. `validate`，失败则停止。
-3. 用本机 Host token（`VIBEX_TOKEN` 或数据目录里的 `host.token`）调用 `plugin_control_import`，`developerLink: true`。
+3. 用本机 Host token（`VIBEX_TOKEN`、`~/.vibex/pluginrc` 或数据目录里的 `host.token`）调用 `plugin_control_import`，`developerLink: true`。
 4. 尝试 `plugin_control_set_enabled`。
-5. 监视源码；digest 变化后重新 build。未加 `--detach` 时把该插件 Worker stderr 打到当前终端。`--detach` 则链接后返回，由 Host 继续监视。
+5. 未加 `--detach` 时把该插件 Worker stderr 打到当前终端。`--detach` 则链接后返回。
 
-Host 未运行时，路径写入 `~/.vibex/imports/links.jsonl`，下次启动再导入。不要向用户或对话索要 token。
+`run dev` 再 build、监视源码；digest 变化后发布候选代。有 Federation remote 时启动 Vite，Host `loadRemote` 指向该端点。chrome 槽位随激活代刷新。
+
+Host 未运行时，路径写入 `~/.vibex/imports/links.jsonl`，下次启动再导入。
 
 其它产品命令：
 
@@ -38,11 +44,11 @@ vibex plugin test --host [dir]
 vibex plugin publish
 ```
 
-`test --host` 会链接、启用、改一份 Skill、等待 digest 更新、再卸载；开发目录必须还在。
+`test --host` 会链接、启用、断言声明的 chrome / 结构面 kind 出现后在禁用时撤下、改一份 Skill（若有）、等待 digest 更新、再卸载；开发目录必须还在。
 
 没有 `vibex plugin toolchain`。查 SDK/CLI 路径用 `vibex-plugin toolchain`。
 
-`vibex-plugin install --link` / `dev` 若仍实现，只能作为同一 Host import 的别名。优先使用 `add --dev`。
+`vibex-plugin install --link` / `dev` 若仍实现，只能作为同一 Host import 的别名。优先使用 `add --dev` 加 `run dev`。
 
 ## 来源锁与发布
 

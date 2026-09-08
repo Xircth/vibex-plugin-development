@@ -69,7 +69,7 @@ TypeScript：定义放 `runtime/worker.ts`；`runtime/main.mjs` 导入该定义�
 
 Python：`from vibex_plugin import define_plugin_worker, run_stdio_plugin_worker`。`if __name__ == "__main__"` 里启动 stdio。Host 用 CPython 3.12.11。
 
-Rust：`vibex_plugin_sdk::{define_plugin_worker, run_stdio_plugin_worker_blocking}`。清单 path 指向已编译二进制，不是 `.rs`。
+Rust：`vibex_plugin_sdk::{define_plugin_worker, run_stdio_plugin_worker_blocking}`。清单 path 指向已编译二进制。
 
 ## App
 
@@ -90,7 +90,9 @@ export default definePluginApp(({ bridge, root, signal }) => {
 
 `bridge`：`pluginId`、`generation`、`invoke(handler, input?)`、`subscribe(channel, listener)`（当前 CLI 打包的 App 只支持 `context`）、`ready()`。`artifact` 仅在 `artifact.editor` 文件页存在：`name`、`readText()` → `{ name, content, revision }`、`writeText(content, expectedRevision)`。
 
-`runtime/app.mjs` + `runtime/app.html` + 可选 `runtime/app.css`。build 产出 `dist/app/index.html`。App 协议 1.0。不要在 App 里读 Host 磁盘路径、Bearer 或 Tauri invoke。
+`runtime/app.mjs` + `runtime/app.html` + 可选 `runtime/app.css`。build 产出 `dist/app/index.html`。App 协议 1.0。App 通过 `bridge` 访问文件与 Worker。
+
+结构面 Federation `mount(root, environment)` 带 `workspaceId` 与 `invoke(handler, input)`。`invoke` 打到本插件 Worker。`vibex plugin run dev` 期间 Host `loadRemote` 指向 Vite。
 
 ## host.call
 
@@ -101,6 +103,7 @@ Worker 通过 `environment.host.call(capability, operation, input?)` 调 Host。
 - `runtime.execute`：按 Runtime lock 启动进程。input 需 `runtimeId`。stdin JSON ≤ 1 MiB，超时 120 秒。
 - `artifact.preview` / `open`：打开预览。需要 Host 签发的约 30 秒一次性 `artifactHandle`，以及 `providerId`。成功返回 `leaseId`、loopback `port`、`capabilityToken`、`expiresAtUnixMs`。
 - `storage.kv.get|put|delete|list`：按插件 ID 隔离的进程内 KV。
+- `storage.settings.get|put`：读写该插件 `config.json`。
 - `conversation.create` `{ agentId, workspaceId?, title?, prompt? }`：创建并绑定一条 VibeX Conversation。省略 `workspaceId` 则使用插件自己的 scratch 工作区。
 - `conversation.list`：只列本插件拥有或被授予的会话。
 - `conversation.read.get` `{ conversationId }`：摘要 + 最近 Turn + 排队输入 + sequence。
@@ -112,8 +115,11 @@ Worker 通过 `environment.host.call(capability, operation, input?)` 调 Host。
 - `conversation.catalog`：可选 Agent。
 - `conversation.archive`
 - `conversation.events.since` `{ conversationId, afterSequence? }`：时间线行。
+- `remote.profile.list|upsert|forget`：客户端已保存 Host。`provisionKind` 是来源标记。
+- `remote.connect` / `disconnect`：把应用壳接到已保存 Host。
+- `provider.presets.list|save|bind`：供应商预设；`bind` 走宿主确认。
 - `log.*`：scoped 诊断，返回 `{}`。
-- `plugin.self` / `doctor`：返回 `pluginId`、`generation`、空诊断。
+- `plugin.self` / `doctor`：返回 `pluginId`、`generation`、诊断与最近崩溃。
 
 会明确失败：
 
@@ -123,7 +129,9 @@ Worker 通过 `environment.host.call(capability, operation, input?)` 调 Host。
 - `agent.invoke` → `handler_not_visible`。
 - `artifact.readText|writeText` → `artifact_not_found`。文本 I/O 在 App bridge。
 
-占位：`storage.settings.get|put` 原样回传 input，持久设置写 `config.json`。`secrets.*` 回 `{ "present": false }`。`events.subscribe` 回 `{ "cursor": 0 }`。`app.notify.toast` 回 `{}`。其余 `capability_unimplemented`。
+占位：`secrets.*` 回 `{ "present": false }`。`events.subscribe` 回 `{ "cursor": 0 }`。`app.notify.toast` 回 `{}`。其余 `capability_unimplemented`。
+
+卸载插件时保留已保存 Host，省略 `remote.profile.forget`。
 
 ## 测试 harness
 
