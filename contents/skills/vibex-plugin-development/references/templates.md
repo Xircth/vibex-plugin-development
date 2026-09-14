@@ -21,6 +21,7 @@ vibex-plugin init <dir> --publisher <id> --template <name>
 | `host-service` | `host.service`（handler `hello`，30s） | Node Worker 定义 + stdio 入口 | 改 handler 与间隔 |
 | `host-chrome` | 六个 chrome 槽位各一条 | Node Worker + App | 改 title / prompt / handler 返回值 |
 | `provider-import` | `provider.model.importSource` | Node Worker | handler 返回 `{ providers }` 或数组 |
+| `provider-catalog` | `provider.model.catalog` | 静态 JSON | `catalogs/example.json` 两条无密钥模板 |
 | `panel` | `app.panel`（`defaultPosition: left`） | Node Worker + Vite Federation `src/views/view.tsx` | 改面板 UI；`run dev` 走 HMR |
 | `kanban-view` | `app.kanban.view` | Node Worker + Vite Federation | 改视图 UI；`run dev` 走 HMR |
 
